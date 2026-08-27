@@ -15,6 +15,11 @@ readonly advantages: string[] | null,
 readonly image_path: string | null,
 readonly category: App.DTO.CategoryDto | null,
 };
+export type UserDto = {
+readonly id: number,
+readonly name: string,
+readonly email: string,
+};
 }
 }
 declare namespace Illuminate {

@@ -19,6 +19,7 @@ final class ProductDto extends Data
         public readonly ?array $advantages,
         public readonly ?string $image_path,
         public readonly ?CategoryDto $category,
+        public readonly ?string $created_at,
     ) {}
 
     public static function fromModel(Product $product): self
@@ -34,6 +35,7 @@ final class ProductDto extends Data
             category: $product->relationLoaded('category') && $product->category !== null
                 ? CategoryDto::fromModel($product->category)
                 : null,
+            created_at: $product->created_at?->toDateTimeString() ?? '',
         );
     }
 }
