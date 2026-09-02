@@ -36,7 +36,8 @@ it('maps a product model to ProductDto', function () {
         ->and($dto->price)->toBe('4500.50')
         ->and($dto->short_description)->toBe('Кратко')
         ->and($dto->advantages)->toBe(['Тёплая', 'Лёгкая'])
-        ->and($dto->image_path)->toBeNull()
+        ->and($dto->image_url)->toBeNull()
+        ->and($dto->thumbnail_url)->toBeNull()
         ->and($dto->category)->not->toBeNull()
         ->and($dto->category->name)->toBe('Одежда');
 });

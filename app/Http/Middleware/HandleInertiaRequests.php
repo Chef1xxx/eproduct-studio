@@ -26,6 +26,9 @@ class HandleInertiaRequests extends Middleware
                     ? UserDto::fromModel($user)
                     : null,
             ],
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+            ],
         ];
     }
 }

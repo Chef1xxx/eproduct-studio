@@ -5,6 +5,15 @@ readonly id: number,
 readonly name: string,
 readonly slug: string,
 };
+export type ProductData = {
+readonly name: string,
+readonly price: string | number,
+readonly category_id: number,
+readonly short_description: string | null,
+readonly description: string | null,
+readonly advantages: string | null,
+readonly image: undefined | null,
+};
 export type ProductDto = {
 readonly id: number,
 readonly name: string,
@@ -12,8 +21,10 @@ readonly price: string,
 readonly short_description: string | null,
 readonly description: string | null,
 readonly advantages: string[] | null,
-readonly image_path: string | null,
+readonly image_url: string | null,
+readonly thumbnail_url: string | null,
 readonly category: App.DTO.CategoryDto | null,
+readonly created_at: string | null,
 };
 export type UserDto = {
 readonly id: number,

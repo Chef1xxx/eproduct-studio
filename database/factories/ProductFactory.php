@@ -32,6 +32,7 @@ class ProductFactory extends Factory
                 fake()->sentence(4),
             ],
             'image_path' => null,
+            'thumbnail_path' => null,
         ];
     }
 }

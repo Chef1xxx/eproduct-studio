@@ -3,8 +3,8 @@
         <article class="product-show">
             <div class="product-show__media">
                 <img
-                    v-if="product.image_path"
-                    :src="product.image_path"
+                    v-if="product.image_url"
+                    :src="product.image_url"
                     :alt="product.name"
                 />
                 <div v-else class="product-show__placeholder">Нет фото</div>

@@ -17,6 +17,7 @@ class Product extends Model
         'description',
         'advantages',
         'image_path',
+        'thumbnail_path',
     ];
 
     protected function casts(): array
