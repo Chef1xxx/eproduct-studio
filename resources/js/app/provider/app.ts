@@ -4,6 +4,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import axiosPlugin from '@/app/plugins/axios';
+import apiPlugin from '@/app/plugins/api';
 import '@/shared/styles/app.scss';
 
 createInertiaApp({
@@ -22,6 +24,9 @@ createInertiaApp({
                 preset: Aura,
             },
         });
+
+        app.use(axiosPlugin);
+        app.use(apiPlugin);
 
         app.mount(el);
     },

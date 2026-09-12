@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Auth\AuthController;
 use App\Http\Controllers\Web\CatalogController;
+use App\Http\Controllers\Web\Seller\ProductAiController;
 use App\Http\Controllers\Web\Seller\SellerController;
 use App\Http\Controllers\Web\Seller\SellerProductController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
     Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
+    Route::post('/seller/products/ai/generate', [ProductAiController::class, 'generate'])->name('seller.products.ai.generate');
     Route::get('/seller/products/{product}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{product}', [SellerProductController::class, 'update'])->name('seller.products.update');
     Route::delete('/seller/products/{product}', [SellerProductController::class, 'destroy'])->name('seller.products.destroy');

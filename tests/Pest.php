@@ -1,6 +1,10 @@
 <?php
 
+use App\Models\AiProvider;
+use App\Models\AiProviderCredential;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /*
@@ -47,4 +51,54 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+function createGigaChatCredential(array $attributes = []): AiProviderCredential
+{
+    $provider = AiProvider::query()->firstOrCreate(
+        ['driver' => 'gigachat'],
+        [
+            'name' => 'GigaChat',
+            'model' => 'GigaChat-2-Max',
+            'scope' => 'GIGACHAT_API_PERS',
+            'is_active' => true,
+        ],
+    );
+
+    return $provider->credentials()->create([
+        'name' => 'Тестовый ключ',
+        'authorization_key' => 'test-authorization-key',
+        'is_active' => true,
+        ...$attributes,
+    ]);
+}
+
+function useGigaChatTestConfig(): void
+{
+    config([
+        'services.gigachat.base_url' => 'https://api.giga.chat/v1',
+        'services.gigachat.oauth_url' => 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
+    ]);
+}
+
+function gigaChatOAuthResponse(): PromiseInterface
+{
+    return Http::response([
+        'access_token' => 'test-access-token',
+        'expires_at' => now()->addMinutes(30)->getTimestampMs(),
+    ]);
+}
+
+function gigaChatChatBody(string $content): array
+{
+    return [
+        'choices' => [[
+            'index' => 0,
+            'finish_reason' => 'stop',
+            'message' => [
+                'role' => 'assistant',
+                'content' => $content,
+            ],
+        ]],
+    ];
 }

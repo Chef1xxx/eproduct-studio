@@ -5,6 +5,10 @@ readonly id: number,
 readonly name: string,
 readonly slug: string,
 };
+export type GeneratedImageDto = {
+readonly mime_type: string,
+readonly base64: string,
+};
 export type ProductData = {
 readonly name: string,
 readonly price: string | number,
@@ -25,6 +29,13 @@ readonly image_url: string | null,
 readonly thumbnail_url: string | null,
 readonly category: App.DTO.CategoryDto | null,
 readonly created_at: string | null,
+};
+export type ProductGenerationResultDto = {
+readonly short_description: string | null,
+readonly description: string | null,
+readonly advantages: string[] | null,
+readonly category_id: number | null,
+readonly generated_image: App.DTO.GeneratedImageDto | null,
 };
 export type UserDto = {
 readonly id: number,

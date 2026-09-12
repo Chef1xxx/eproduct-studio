@@ -38,6 +38,26 @@ final class ImageService
         ];
     }
 
+    public function uploadToJpegBinary(UploadedFile $file): string
+    {
+        return Image::fromUpload($file)
+            ->toJpeg()
+            ->quality(85)
+            ->toBytes();
+    }
+
+    public function storedToJpegBinary(string $path): ?string
+    {
+        if (! Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        return Image::fromStorage($path, 'public')
+            ->toJpeg()
+            ->quality(85)
+            ->toBytes();
+    }
+
     public function deleteIfExists(?string ...$paths): void
     {
         foreach ($paths as $path) {

@@ -63,6 +63,8 @@
             </div>
         </div>
 
+        <ProductAiButton :payload="aiPayload" @generated="applyGenerated" />
+
         <div class="product-form__actions">
             <Button type="submit" :label="isEdit ? 'Сохранить' : 'Создать'" :loading="form.processing" />
             <Link href="/seller" class="product-form__cancel">Отмена</Link>
@@ -71,13 +73,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { Link, useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
+import ProductAiButton from '@/features/product-ai/ui/ProductAiButton.vue';
+import type { ProductAiGeneratePayload } from '@/shared/api/product-ai';
+import { base64ToFile } from '@/shared/lib/files/base64ToFile';
 
 const props = defineProps<{
     product: App.DTO.ProductDto | null;
@@ -105,20 +110,21 @@ const form = useForm({
 
 const previewUrl = ref<string | null>(null);
 
+watch(
+    () => form.image,
+    (file) => {
+        if (previewUrl.value) {
+            URL.revokeObjectURL(previewUrl.value);
+        }
+
+        previewUrl.value = file ? URL.createObjectURL(file) : null;
+    },
+);
+
 function onImageChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
 
-    if (previewUrl.value) {
-        URL.revokeObjectURL(previewUrl.value);
-        previewUrl.value = null;
-    }
-
-    form.image = file;
-
-    if (file) {
-        previewUrl.value = URL.createObjectURL(file);
-    }
+    form.image = input.files?.[0] ?? null;
 }
 
 onBeforeUnmount(() => {
@@ -126,6 +132,46 @@ onBeforeUnmount(() => {
         URL.revokeObjectURL(previewUrl.value);
     }
 });
+
+const aiPayload = computed<ProductAiGeneratePayload>(() => ({
+    productId: props.product?.id ?? null,
+    name: form.name,
+    price: form.price,
+    categoryId: form.category_id,
+    shortDescription: form.short_description,
+    description: form.description,
+    advantages: form.advantages,
+    image: form.image,
+}));
+
+function applyGenerated(result: App.DTO.ProductGenerationResultDto): void {
+    if (isBlank(form.short_description) && result.short_description) {
+        form.short_description = result.short_description;
+    }
+
+    if (isBlank(form.description) && result.description) {
+        form.description = result.description;
+    }
+
+    if (isBlank(form.advantages) && result.advantages?.length) {
+        form.advantages = result.advantages.join(', ');
+    }
+
+    if (form.category_id === null && result.category_id !== null) {
+        form.category_id = result.category_id;
+    }
+
+    if (!form.image && result.generated_image) {
+        const { base64, mime_type } = result.generated_image;
+        const extension = mime_type === 'image/png' ? 'png' : 'jpg';
+
+        form.image = base64ToFile(base64, mime_type, `ai-generated.${extension}`);
+    }
+}
+
+function isBlank(value: string | null): boolean {
+    return value === null || value.trim() === '';
+}
 
 function submit(): void {
     if (isEdit.value && props.product) {

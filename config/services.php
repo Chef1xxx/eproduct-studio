@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'gigachat' => [
+        'base_url' => env('GIGACHAT_BASE_URL', 'https://api.giga.chat/v1'),
+        'oauth_url' => env('GIGACHAT_OAUTH_URL', 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth'),
+        'connect_timeout' => (int) env('GIGACHAT_CONNECT_TIMEOUT', 5),
+        'timeout' => (int) env('GIGACHAT_TIMEOUT', 60),
+        'image_timeout' => (int) env('GIGACHAT_IMAGE_TIMEOUT', 120),
+    ],
+
 ];
