@@ -37,6 +37,7 @@ final class AiProviderResolver
             model: $provider->model,
             scope: $provider->scope,
             authorizationKey: $credential->authorization_key,
+            providerId: $provider->id,
             credentialId: $credential->id,
         );
     }

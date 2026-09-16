@@ -6,6 +6,8 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import axiosPlugin from '@/app/plugins/axios';
 import apiPlugin from '@/app/plugins/api';
+import echoPlugin, { userIdFromProps } from '@/app/plugins/echo';
+import { vLoading } from '@/shared/lib/directives/loading';
 import '@/shared/styles/app.scss';
 
 createInertiaApp({
@@ -27,6 +29,9 @@ createInertiaApp({
 
         app.use(axiosPlugin);
         app.use(apiPlugin);
+        app.use(echoPlugin, { initialUserId: userIdFromProps(props.initialPage.props) });
+
+        app.directive('loading', vLoading);
 
         app.mount(el);
     },

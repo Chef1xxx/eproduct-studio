@@ -9,6 +9,7 @@ final readonly class ResolvedAiProvider
         public string $model,
         public string $scope,
         public string $authorizationKey,
+        public int $providerId,
         public int $credentialId,
     ) {}
 
@@ -19,6 +20,7 @@ final readonly class ResolvedAiProvider
             'model' => $this->model,
             'scope' => $this->scope,
             'authorizationKey' => '***',
+            'providerId' => $this->providerId,
             'credentialId' => $this->credentialId,
         ];
     }

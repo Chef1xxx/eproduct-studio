@@ -1,5 +1,5 @@
 <template>
-    <form class="product-form" @submit.prevent="submit">
+    <form v-loading="isGenerating" class="product-form" @submit.prevent="submit">
         <div class="product-form__field">
             <label for="name">Название</label>
             <InputText id="name" v-model="form.name" class="w-full" />
@@ -63,7 +63,13 @@
             </div>
         </div>
 
-        <ProductAiButton :payload="aiPayload" @generated="applyGenerated" />
+        <ProductAiButton
+            v-if="currentUserId !== null"
+            v-model:loading="isGenerating"
+            :user-id="currentUserId"
+            :payload="aiPayload"
+            @generated="applyGenerated"
+        />
 
         <div class="product-form__actions">
             <Button type="submit" :label="isEdit ? 'Сохранить' : 'Создать'" :loading="form.processing" />
@@ -74,7 +80,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
@@ -88,6 +94,12 @@ const props = defineProps<{
     product: App.DTO.ProductDto | null;
     categories: App.DTO.CategoryDto[];
 }>();
+
+const page = usePage<{ auth: { user: App.DTO.UserDto | null } }>();
+
+const currentUserId = computed(() => page.props.auth.user?.id ?? null);
+
+const isGenerating = ref(false);
 
 const isEdit = computed(() => props.product !== null);
 

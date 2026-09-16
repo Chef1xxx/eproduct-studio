@@ -19,6 +19,7 @@ function gigaChatTestProvider(): ResolvedAiProvider
         model: 'GigaChat-2-Max',
         scope: 'GIGACHAT_API_PERS',
         authorizationKey: 'test-authorization-key',
+        providerId: 1,
         credentialId: 1,
     );
 }

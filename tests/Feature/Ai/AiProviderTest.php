@@ -35,6 +35,7 @@ it('resolves the least recently used active credential and touches last_used_at'
         ->and($resolved->driver)->toBe('gigachat')
         ->and($resolved->scope)->toBe('GIGACHAT_API_PERS')
         ->and($resolved->authorizationKey)->toBe('test-authorization-key')
+        ->and($resolved->providerId)->toBe($usedYesterday->ai_provider_id)
         ->and($usedYesterday->fresh()->last_used_at->equalTo(now()))->toBeTrue();
 });
 

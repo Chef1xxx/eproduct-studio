@@ -2,38 +2,40 @@
 
 namespace App\Domain\AI\Services;
 
+use App\Domain\AI\DTO\ProductAiOutcome;
 use App\Domain\AI\DTO\ProductGenerationData;
 use App\Domain\AI\DTO\ProductGenerationInput;
 use App\Domain\AI\DTO\ProductImageGenerationInput;
-use App\Domain\AI\Exceptions\AiProviderException;
-use App\Domain\Media\Services\ImageService;
-use App\DTO\GeneratedImageDto;
-use App\DTO\ProductGenerationResultDto;
 use App\Models\Category;
+use Closure;
 
 final class ProductAiService
 {
     public function __construct(
         private readonly AiProviderResolver $resolver,
         private readonly AiProviderRegistry $registry,
-        private readonly ImageService $images,
     ) {}
 
-    public function generate(ProductGenerationData $data): ProductGenerationResultDto
+    public function generate(ProductGenerationData $data, ?string $imageJpeg, ?Closure $onProviderResolved = null): ProductAiOutcome
     {
         $missingFields = $this->missingFields($data);
-        $needsImage = ! $data->hasImage();
+        $needsImage = $imageJpeg === null;
 
         if ($missingFields === [] && ! $needsImage) {
-            return ProductGenerationResultDto::nothingGenerated();
+            return ProductAiOutcome::nothingGenerated();
         }
 
         $provider = $this->resolver->resolve();
+
+        if ($onProviderResolved !== null) {
+            $onProviderResolved($provider);
+        }
+
         $client = $this->registry->get($provider->driver);
 
         $result = $missingFields === []
             ? null
-            : $client->generateProductData($this->buildInput($data, $missingFields), $provider);
+            : $client->generateProductData($this->buildInput($data, $missingFields, $imageJpeg), $provider);
 
         $shortDescription = in_array('short_description', $missingFields, true) ? $result?->shortDescription : null;
         $description = in_array('description', $missingFields, true) ? $result?->description : null;
@@ -47,12 +49,12 @@ final class ProductAiService
             ), $provider)
             : null;
 
-        return new ProductGenerationResultDto(
-            short_description: $shortDescription,
+        return new ProductAiOutcome(
+            shortDescription: $shortDescription,
             description: $description,
             advantages: $advantages,
-            category_id: $categoryId,
-            generated_image: $generatedImage === null ? null : GeneratedImageDto::fromGeneratedImage($generatedImage),
+            categoryId: $categoryId,
+            generatedImage: $generatedImage,
         );
     }
 
@@ -66,7 +68,7 @@ final class ProductAiService
         ]));
     }
 
-    private function buildInput(ProductGenerationData $data, array $missingFields): ProductGenerationInput
+    private function buildInput(ProductGenerationData $data, array $missingFields, ?string $imageJpeg): ProductGenerationInput
     {
         $categories = Category::query()
             ->orderBy('name')
@@ -84,21 +86,8 @@ final class ProductAiService
             categoryId: $data->categoryId,
             categories: $categories,
             missingFields: $missingFields,
-            imageJpeg: $this->imageForVision($data),
+            imageJpeg: $imageJpeg,
         );
-    }
-
-    private function imageForVision(ProductGenerationData $data): ?string
-    {
-        if ($data->image !== null) {
-            return $this->images->uploadToJpegBinary($data->image);
-        }
-
-        if ($data->existingImagePath !== null && $data->existingImagePath !== '') {
-            return $this->images->storedToJpegBinary($data->existingImagePath);
-        }
-
-        return null;
     }
 
     private function firstFilled(?string ...$values): ?string

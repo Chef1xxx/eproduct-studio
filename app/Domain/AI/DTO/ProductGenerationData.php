@@ -13,11 +13,10 @@ final readonly class ProductGenerationData
         public ?string $shortDescription,
         public ?string $description,
         public ?string $advantages,
-        public ?UploadedFile $image,
-        public ?string $existingImagePath,
+        public ?UploadedFile $image = null,
     ) {}
 
-    public static function fromValidated(array $validated, ?string $existingImagePath): self
+    public static function fromValidated(array $validated): self
     {
         return new self(
             name: $validated['name'],
@@ -27,8 +26,24 @@ final readonly class ProductGenerationData
             description: $validated['description'] ?? null,
             advantages: $validated['advantages'] ?? null,
             image: $validated['image'] ?? null,
-            existingImagePath: $existingImagePath,
         );
+    }
+
+    public static function fromSnapshot(array $input): self
+    {
+        return self::fromValidated([...$input, 'image' => null]);
+    }
+
+    public function toSnapshot(): array
+    {
+        return [
+            'name' => $this->name,
+            'price' => $this->price,
+            'category_id' => $this->categoryId,
+            'short_description' => $this->shortDescription,
+            'description' => $this->description,
+            'advantages' => $this->advantages,
+        ];
     }
 
     public function advantagesList(): array
@@ -41,11 +56,5 @@ final readonly class ProductGenerationData
             array_map('trim', explode(',', $this->advantages)),
             static fn (string $item): bool => $item !== '',
         ));
-    }
-
-    public function hasImage(): bool
-    {
-        return $this->image !== null
-            || ($this->existingImagePath !== null && $this->existingImagePath !== '');
     }
 }

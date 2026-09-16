@@ -7,7 +7,6 @@ use App\Domain\AI\DTO\ProductGenerationInput;
 use App\Domain\AI\DTO\ProductGenerationResult;
 use App\Domain\AI\DTO\ProductImageGenerationInput;
 use App\Domain\AI\DTO\ResolvedAiProvider;
-use App\Domain\AI\Exceptions\AiProviderException;
 
 interface AiProviderClientInterface
 {

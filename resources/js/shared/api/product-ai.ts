@@ -13,7 +13,7 @@ export type ProductAiGeneratePayload = {
 
 export function createProductAiApi(http: AxiosInstance) {
     return {
-        async generate(payload: ProductAiGeneratePayload): Promise<App.DTO.ProductGenerationResultDto> {
+        async generate(payload: ProductAiGeneratePayload): Promise<App.DTO.AiGenerationDto> {
             const formData = new FormData();
 
             formData.append('name', payload.name);
@@ -28,7 +28,7 @@ export function createProductAiApi(http: AxiosInstance) {
                 formData.append('image', payload.image);
             }
 
-            const { data } = await http.post<App.DTO.ProductGenerationResultDto>(
+            const { data } = await http.post<App.DTO.AiGenerationDto>(
                 '/seller/products/ai/generate',
                 formData,
             );

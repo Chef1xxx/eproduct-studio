@@ -38,9 +38,6 @@ class ProductGenerationRequest extends FormRequest
 
     public function toGenerationData(): ProductGenerationData
     {
-        return ProductGenerationData::fromValidated(
-            $this->validated(),
-            existingImagePath: $this->product()?->image_path,
-        );
+        return ProductGenerationData::fromValidated($this->validated());
     }
 }

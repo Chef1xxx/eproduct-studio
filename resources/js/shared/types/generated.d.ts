@@ -1,5 +1,11 @@
 declare namespace App {
 namespace DTO {
+export type AiGenerationDto = {
+readonly id: number,
+readonly status: string,
+readonly result: App.DTO.ProductGenerationResultDto | null,
+readonly error: string | null,
+};
 export type CategoryDto = {
 readonly id: number,
 readonly name: string,

@@ -1,10 +1,12 @@
 import { inject, type InjectionKey } from 'vue';
 import type { AxiosInstance } from 'axios';
+import { createAiGenerationsApi } from './ai-generations';
 import { createProductAiApi } from './product-ai';
 
 export function createApi(http: AxiosInstance) {
     return {
         productAi: createProductAiApi(http),
+        aiGenerations: createAiGenerationsApi(http),
     };
 }
 

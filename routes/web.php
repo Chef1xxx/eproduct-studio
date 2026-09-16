@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/seller/products/create', [SellerProductController::class, 'create'])->name('seller.products.create');
     Route::post('/seller/products', [SellerProductController::class, 'store'])->name('seller.products.store');
     Route::post('/seller/products/ai/generate', [ProductAiController::class, 'generate'])->name('seller.products.ai.generate');
+    Route::get('/seller/ai-generations/{generation}', [ProductAiController::class, 'show'])->name('seller.ai-generations.show');
     Route::get('/seller/products/{product}/edit', [SellerProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{product}', [SellerProductController::class, 'update'])->name('seller.products.update');
     Route::delete('/seller/products/{product}', [SellerProductController::class, 'destroy'])->name('seller.products.destroy');
